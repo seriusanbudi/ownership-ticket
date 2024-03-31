@@ -117,7 +117,15 @@ contract Book {
     ) public view returns (string memory, address) {
         require(index < certificates.length, "Invalid index");
 
-        Certificate storage cert = certificates[index];
+        Certificate memory cert = certificates[index];
         return (cert.uid, cert.owner);
+    }
+
+    function setOwner(address _newOwner) public onlyContractOwner {
+        owner = _newOwner;
+    }
+
+    function isPaused() public view returns (bool) {
+        return paused;
     }
 }
