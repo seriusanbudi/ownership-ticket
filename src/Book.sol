@@ -7,7 +7,7 @@ contract Book {
         address owner;
     }
 
-    Certificate[] public certificates;
+    Certificate[] private certificates;
     mapping(string => bool) private existingUIDs;
 
     address private owner;

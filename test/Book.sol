@@ -13,7 +13,7 @@ contract BookTest is Test {
 
     function test_mintCertificate() public {
         book.mintCertificate("CF-001", address(this));
-        (string memory uid, address owner) = book.certificates(0);
+        (string memory uid, address owner) = book.getCertificate(0);
         assertEq(uid, "CF-001");
         assertEq(owner, address(this));
     }
@@ -22,7 +22,7 @@ contract BookTest is Test {
         address newOwner = address(0x1);
         book.mintCertificate("CF-001", address(this));
         book.transferOwnership(0, newOwner);
-        (string memory uid, address owner) = book.certificates(0);
+        (string memory uid, address owner) = book.getCertificate(0);
         assertEq(uid, "CF-001");
         assertEq(owner, newOwner);
     }
