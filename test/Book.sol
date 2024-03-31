@@ -29,10 +29,8 @@ contract BookTest is Test {
 
     function test_burnCertificate() public {
         book.mintCertificate("CF-001", address(this));
+        assertEq(book.length(), 1);
         book.burnCertificate(0);
-
-        (string memory uid, address owner) = book.certificates(0);
-        assertEq(uid, "");
-        assertEq(owner, address(0));
+        assertEq(book.length(), 0);
     }
 }
