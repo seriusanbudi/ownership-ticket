@@ -10,8 +10,8 @@ contract Book {
     Certificate[] private certificates;
     mapping(string => bool) private existingUIDs;
 
-    address private owner;
-    bool public paused; // State variable to track the pause state
+    address public owner;
+    bool public paused;
 
     event CertificateMinted(string uid, address owner);
     event OwnershipTransferred(string uid, address from, address to);
