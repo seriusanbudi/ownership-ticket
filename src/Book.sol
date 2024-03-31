@@ -34,27 +34,12 @@ contract Book {
         _;
     }
 
-    function pause() public onlyContractOwner {
-        paused = true;
-        emit Paused();
-    }
-
-    function unpause() public onlyContractOwner {
-        paused = false;
-        emit Unpaused();
-    }
-
     function length() public view returns (uint) {
         return certificates.length;
     }
 
-    modifier onlyCertificateOwner(uint index) {
-        require(
-            msg.sender == certificates[index].owner,
-            "Not the certificate owner"
-        );
-        require(!paused, "Contract is paused");
-        _;
+    function isPaused() public view returns (bool) {
+        return paused;
     }
 
     function mintCertificate(
@@ -66,31 +51,6 @@ contract Book {
         certificates.push(Certificate(_uid, _owner));
         existingUIDs[_uid] = true;
         emit CertificateMinted(_uid, _owner);
-    }
-
-    function transferOwnership(
-        uint index,
-        address newOwner
-    ) public onlyCertificateOwner(index) whenNotPaused {
-        address oldOwner = certificates[index].owner;
-        certificates[index].owner = newOwner;
-        emit OwnershipTransferred(certificates[index].uid, oldOwner, newOwner);
-    }
-
-    function burnCertificate(
-        uint index
-    ) public onlyCertificateOwner(index) whenNotPaused {
-        string memory uid = certificates[index].uid;
-        emit CertificateBurned(uid);
-
-        existingUIDs[uid] = false;
-
-        uint lastIndex = certificates.length - 1;
-        if (index != lastIndex) {
-            certificates[index] = certificates[lastIndex];
-            existingUIDs[certificates[index].uid] = true;
-        }
-        certificates.pop();
     }
 
     function getCertificateIndexByUID(
@@ -121,11 +81,42 @@ contract Book {
         return (cert.uid, cert.owner);
     }
 
-    function setOwner(address _newOwner) public onlyContractOwner {
-        owner = _newOwner;
+    function transferOwnership(
+        uint index,
+        address newOwner
+    ) public onlyContractOwner whenNotPaused {
+        address oldOwner = certificates[index].owner;
+        certificates[index].owner = newOwner;
+        emit OwnershipTransferred(certificates[index].uid, oldOwner, newOwner);
     }
 
-    function isPaused() public view returns (bool) {
-        return paused;
+    function burnCertificate(
+        uint index
+    ) public onlyContractOwner whenNotPaused {
+        string memory uid = certificates[index].uid;
+        emit CertificateBurned(uid);
+
+        existingUIDs[uid] = false;
+
+        uint lastIndex = certificates.length - 1;
+        if (index != lastIndex) {
+            certificates[index] = certificates[lastIndex];
+            existingUIDs[certificates[index].uid] = true;
+        }
+        certificates.pop();
+    }
+
+    function pause() public onlyContractOwner {
+        paused = true;
+        emit Paused();
+    }
+
+    function unpause() public onlyContractOwner {
+        paused = false;
+        emit Unpaused();
+    }
+
+    function setOwner(address _newOwner) public onlyContractOwner {
+        owner = _newOwner;
     }
 }
