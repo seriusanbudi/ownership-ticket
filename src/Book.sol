@@ -50,6 +50,11 @@ contract Book {
 
     function burnCertificate(uint index) public onlyCertificateOwner(index) {
         emit CertificateBurned(certificates[index].uid);
-        delete certificates[index];
+
+        uint lastIndex = certificates.length - 1;
+        if (index != lastIndex) {
+            certificates[index] = certificates[lastIndex];
+        }
+        certificates.pop();
     }
 }
