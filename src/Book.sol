@@ -92,4 +92,32 @@ contract Book {
         }
         certificates.pop();
     }
+
+    function getCertificateIndexByUID(
+        string memory _uid
+    ) public view returns (uint) {
+        require(existingUIDs[_uid], "Certificate with this UID does not exist");
+
+        bytes32 uidHash = keccak256(abi.encodePacked(_uid));
+
+        for (uint i = 0; i < certificates.length; i++) {
+            bytes32 certUidHash = keccak256(
+                abi.encodePacked(certificates[i].uid)
+            );
+            if (certUidHash == uidHash) {
+                return i;
+            }
+        }
+
+        revert("Certificate not found");
+    }
+
+    function getCertificate(
+        uint index
+    ) public view returns (string memory, address) {
+        require(index < certificates.length, "Invalid index");
+
+        Certificate storage cert = certificates[index];
+        return (cert.uid, cert.owner);
+    }
 }

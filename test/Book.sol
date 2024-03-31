@@ -33,4 +33,29 @@ contract BookTest is Test {
         book.burnCertificate(0);
         assertEq(book.length(), 0);
     }
+
+    function test_getCertificateIndexByUID() public {
+        book.mintCertificate("CF-001", address(this));
+        book.mintCertificate("CF-002", address(this));
+        book.mintCertificate("CF-003", address(this));
+
+        assertEq(book.length(), 3);
+
+        uint index = book.getCertificateIndexByUID("CF-002");
+
+        assertEq(index, 1);
+    }
+
+    function test_getCertificate() public {
+        book.mintCertificate("CF-001", address(this));
+        book.mintCertificate("CF-002", address(this));
+        book.mintCertificate("CF-003", address(this));
+
+        assertEq(book.length(), 3);
+
+        (string memory uid, address owner) = book.getCertificate(1);
+
+        assertEq(uid, "CF-002");
+        assertEq(owner, address(this));
+    }
 }
